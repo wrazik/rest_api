@@ -27,11 +27,11 @@ Server::Server(const std::string &address, const unsigned short port,
 }
 
 void Server::run() {
+    m_listener->run();
     for (auto i = m_thread_count - 1; i > 0; --i) {
         m_threads.emplace_back(
             [&m_context = this->m_context] { m_context.run(); });
     }
-    m_listener->run();
     m_context.run();
 }
 

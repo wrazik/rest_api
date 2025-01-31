@@ -32,16 +32,20 @@ template <class Body, class Allocator>
 http::message_generator handle_request(
     const std::shared_ptr<Store>& store,
     http::request<Body, http::basic_fields<Allocator>>&& req) {
+
     std::cout << "This is example handle " << std::endl;
-    for (const auto& el : *store) {
-        std::cout << el.first << " " << el.second << std::endl;
-    }
-    std::cout << "End of example handle " << std::endl;
-    std::cout << std::boolalpha << (req.method() == http::verb::get) << std::endl;
-    std::cout << std::boolalpha << (req.method() == http::verb::post) << std::endl;
-    std::cout << std::boolalpha << (req.method() == http::verb::put) << std::endl;
+    //for (const auto& el : *store) {
+    //    std::cout << el.first << " " << el.second << std::endl;
+    //}
+    //std::cout << "End of example handle " << std::endl;
+    //std::string path = std::string(req.target());
+    //std::string body = std::string(req.body());
+    //std::string method = std::string(req.method_string());
 
-
+    //std::cout << "Request: \n"
+    //          << "path: " << path << "\n"
+    //          << "body: " << body << "\n"
+    //          << "method: " << method << "\n";
 
     auto const bad_request = [&req](beast::string_view why) {
         http::response<http::string_body> res{http::status::bad_request,
@@ -55,28 +59,28 @@ http::message_generator handle_request(
         return res;
     };
 
-    auto const not_found = [&req](beast::string_view target) {
-        http::response<http::string_body> res{http::status::not_found,
-                                              req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-        res.set(http::field::content_type, "text/html");
-        res.keep_alive(req.keep_alive());
-        res.body() =
-            "The resource '" + std::string(target) + "' was not found.";
-        res.prepare_payload();
-        return res;
-    };
+    //auto const not_found = [&req](beast::string_view target) {
+    //    http::response<http::string_body> res{http::status::not_found,
+    //                                          req.version()};
+    //    res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+    //    res.set(http::field::content_type, "text/html");
+    //    res.keep_alive(req.keep_alive());
+    //    res.body() =
+    //        "The resource '" + std::string(target) + "' was not found.";
+    //    res.prepare_payload();
+    //    return res;
+    //};
 
-    auto const server_error = [&req](beast::string_view what) {
-        http::response<http::string_body> res{
-            http::status::internal_server_error, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-        res.set(http::field::content_type, "text/html");
-        res.keep_alive(req.keep_alive());
-        res.body() = "An error occurred: '" + std::string(what) + "'";
-        res.prepare_payload();
-        return res;
-    };
+    //auto const server_error = [&req](beast::string_view what) {
+    //    http::response<http::string_body> res{
+    //        http::status::internal_server_error, req.version()};
+    //    res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+    //    res.set(http::field::content_type, "text/html");
+    //    res.keep_alive(req.keep_alive());
+    //    res.body() = "An error occurred: '" + std::string(what) + "'";
+    //    res.prepare_payload();
+    //    return res;
+    //};
 
     return bad_request("Unknown HTTP-method");
 }
