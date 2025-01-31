@@ -6,7 +6,16 @@ find_package(boost_beast REQUIRED CONFIG)
 find_package(boost_asio REQUIRED CONFIG)
 
 set(CPP_SOURCES
-    src/rest_api.cpp
+        src/rest_api.cpp
+        src/server.cpp
+        src/server.hpp
+        src/listener.cpp
+        src/listener.hpp
+        src/session.cpp
+        src/session.hpp
+        src/request_handler.hpp
+        src/common_ops.cpp
+        src/common_ops.hpp
 )
 
 add_executable(rest_api ${CPP_SOURCES})
