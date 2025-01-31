@@ -19,9 +19,9 @@ class Server {
    private:
     std::string m_address;
     std::shared_ptr<Listener> m_listener;
+    boost::asio::io_context m_context;
     std::vector<std::thread> m_threads;
     size_t m_thread_count;
-    boost::asio::io_context m_context;
     size_t m_port;
 };
 }  // namespace rest

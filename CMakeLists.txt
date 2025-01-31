@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 23)
 
 find_package(boost_beast REQUIRED CONFIG)
 find_package(boost_asio REQUIRED CONFIG)
+find_package(nlohmann_json REQUIRED CONFIG)
 
 set(CPP_SOURCES
         src/rest_api.cpp
@@ -16,11 +17,12 @@ set(CPP_SOURCES
         src/request_handler.hpp
         src/common_ops.cpp
         src/common_ops.hpp
+        src/save_event.hpp
 )
 
 add_executable(rest_api ${CPP_SOURCES})
 
-target_link_libraries(rest_api PRIVATE Boost::asio Boost::beast)
+target_link_libraries(rest_api PRIVATE Boost::asio Boost::beast nlohmann_json::nlohmann_json)
 
 add_custom_target(
         check-format
