@@ -1,7 +1,8 @@
 #include "common_ops.hpp"
 
-#include <boost/beast/core/string.hpp>
 #include <iostream>
+
+#include <boost/beast/core/string.hpp>
 
 namespace rest {
 void fail(boost::beast::error_code ec, char const *what) {

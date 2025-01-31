@@ -1,8 +1,12 @@
 #pragma once
+#include <map>
+#include <memory>
+
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast.hpp>
 #include <boost/beast/http.hpp>
-#include <memory>
+
+#include "common_types.hpp"
 
 namespace rest {
 
@@ -11,14 +15,13 @@ namespace http = beast::http;
 using tcp = boost::asio::ip::tcp;
 
 class Session : public std::enable_shared_from_this<Session> {
-    beast::tcp_stream stream_;
-    beast::flat_buffer buffer_;
-    std::shared_ptr<std::string const> doc_root_;
-    http::request<http::string_body> req_;
+    beast::tcp_stream m_stream;
+    beast::flat_buffer m_buffer;
+    std::shared_ptr<Store> m_store;
+    http::request<http::string_body> m_req;
 
    public:
-    Session(tcp::socket&& socket,
-            std::shared_ptr<std::string const> const& doc_root);
+    Session(tcp::socket&& socket, std::shared_ptr<Store> const& store);
     void run();
     void do_read();
     void on_read(beast::error_code ec, std::size_t bytes_transferred);

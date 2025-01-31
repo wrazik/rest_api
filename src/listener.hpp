@@ -1,8 +1,12 @@
 #pragma once
+#include <map>
+#include <memory>
+
 #include <boost/asio.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast.hpp>
-#include <memory>
+
+#include "common_types.hpp"
 
 namespace rest {
 
@@ -11,13 +15,13 @@ namespace net = boost::asio;
 using tcp = boost::asio::ip::tcp;
 
 class Listener : public std::enable_shared_from_this<Listener> {
-    net::io_context& ioc_;
-    tcp::acceptor acceptor_;
-    std::shared_ptr<std::string const> doc_root_;
+    net::io_context& m_context;
+    tcp::acceptor m_acceptor;
+    std::shared_ptr<Store> m_store;
 
    public:
     Listener(net::io_context& ioc, tcp::endpoint endpoint,
-             std::shared_ptr<std::string const> const& doc_root);
+             std::shared_ptr<Store> store);
     void run();
 
    private:
