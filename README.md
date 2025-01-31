@@ -1,5 +1,5 @@
 # REST API
-![example workflow](https://github.com/github/docs/actions/workflows/build.yml/badge.svg)
+![Build status](https://github.com/wrazik/rest_api/actions/workflows/build.yml/badge.svg)
 
 ## Description
 TODO
