@@ -1,9 +1,10 @@
 #include "session.hpp"
 
+#include <iostream>
+
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/core.hpp>
-#include <iostream>
 
 #include "common_ops.hpp"
 #include "request_handler.hpp"
@@ -14,23 +15,22 @@ namespace beast = boost::beast;
 namespace net = boost::asio;
 using tcp = net::ip::tcp;
 
-Session::Session(tcp::socket &&socket,
-                 std::shared_ptr<std::string const> const &doc_root)
-    : stream_(std::move(socket)), doc_root_(doc_root) {}
+Session::Session(tcp::socket &&socket, std::shared_ptr<Store> const &store)
+    : m_stream(std::move(socket)), m_store(store) {}
 
 void Session::run() {
     net::dispatch(
-        stream_.get_executor(),
+        m_stream.get_executor(),
         beast::bind_front_handler(&Session::do_read, shared_from_this()));
 }
 
 void Session::do_read() {
-    req_ = {};
+    m_req = {};
 
-    stream_.expires_after(std::chrono::seconds(30));
+    m_stream.expires_after(std::chrono::seconds(30));
 
     http::async_read(
-        stream_, buffer_, req_,
+        m_stream, m_buffer, m_req,
         beast::bind_front_handler(&Session::on_read, shared_from_this()));
 }
 
@@ -41,13 +41,13 @@ void Session::on_read(beast::error_code ec, std::size_t bytes_transferred) {
 
     if (ec) return fail(ec, "read");
 
-    send_response(handle_request(*doc_root_, std::move(req_)));
+    send_response(handle_request(m_store, std::move(m_req)));
 }
 
 void Session::send_response(http::message_generator &&msg) {
     bool keep_alive = msg.keep_alive();
 
-    beast::async_write(stream_, std::move(msg),
+    beast::async_write(m_stream, std::move(msg),
                        beast::bind_front_handler(
                            &Session::on_write, shared_from_this(), keep_alive));
 }
@@ -66,10 +66,7 @@ void Session::on_write(bool keep_alive, beast::error_code ec,
 }
 
 void Session::do_close() {
-    // Send a TCP shutdown
     beast::error_code ec;
-    stream_.socket().shutdown(tcp::socket::shutdown_send, ec);
-
-    // At this point the connection is closed gracefully
+    m_stream.socket().shutdown(tcp::socket::shutdown_send, ec);
 }
 }  // namespace rest

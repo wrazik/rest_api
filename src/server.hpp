@@ -1,12 +1,14 @@
 #pragma once
-#include <boost/asio.hpp>
 #include <string>
 #include <thread>
 #include <vector>
 
+#include <boost/asio.hpp>
+
 #include "listener.hpp"
 
 namespace rest {
+
 class Server {
    public:
     Server(const std::string &address, const unsigned short port,
