@@ -7,7 +7,6 @@ find_package(boost_asio REQUIRED CONFIG)
 find_package(nlohmann_json REQUIRED CONFIG)
 
 set(CPP_SOURCES
-        src/rest_api.cpp
         src/server.cpp
         src/server.hpp
         src/listener.cpp
@@ -18,22 +17,45 @@ set(CPP_SOURCES
         src/common_ops.cpp
         src/common_ops.hpp
         src/save_event.hpp
+        src/store.cpp
+        src/store.hpp
+        src/get_mean_path.hpp
+        src/resp_factory.cpp
+        src/resp_factory.hpp
 )
 
-add_executable(rest_api ${CPP_SOURCES})
 
-target_link_libraries(rest_api PRIVATE Boost::asio Boost::beast nlohmann_json::nlohmann_json)
+add_library(rest_api_lib ${CPP_SOURCES})
+target_link_libraries(rest_api_lib PRIVATE Boost::asio Boost::beast nlohmann_json::nlohmann_json)
+target_include_directories(rest_api_lib PUBLIC src)
+add_executable(rest_api src/rest_api.cpp)
+
+target_link_libraries(rest_api PRIVATE Boost::asio Boost::beast rest_api_lib)
+
+enable_testing()
+set(TEST_SOURCES
+        unit_tests/test_save_event.cpp
+)
+find_package(GTest REQUIRED CONFIG)
+include(GoogleTest)
+add_executable(run_tests
+        ${TEST_SOURCES}
+)
+target_link_libraries(run_tests PRIVATE GTest::gtest_main rest_api_lib)
+add_test(
+        NAME run_tests
+        COMMAND run_tests)
 
 add_custom_target(
         check-format
-        COMMAND clang-format --dry-run ${CPP_SOURCES}
+        COMMAND clang-format --dry-run ${CPP_SOURCES} ${TEST_SOURCES}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "checking format in src..."
 )
 
 add_custom_target(
         format
-        COMMAND clang-format -i ${CPP_SOURCES}
+        COMMAND clang-format -i ${CPP_SOURCES} ${TEST_SOURCES}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "checking format in src..."
 )

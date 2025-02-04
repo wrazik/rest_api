@@ -7,7 +7,7 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast.hpp>
 
-#include "common_types.hpp"
+#include "store.hpp"
 
 namespace rest {
 namespace net = boost::asio;

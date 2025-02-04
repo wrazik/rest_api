@@ -60,3 +60,10 @@ jobs:
       - name: Test (Release configuration)
         run: |
           ctest --preset test-release
+
+      - name: Prepare python environment
+        if: runner.os == 'Linux'
+        run: |
+          cd ${{ github.workspace }}/integration_tests
+          python -r requirements.txt
+          pytest -v test_api.py

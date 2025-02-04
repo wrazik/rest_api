@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
         std::cerr << "Usage: rest_api <address> <port> "
                      "<threads>\n"
                   << "Example:\n"
-                  << "    http-server-async 0.0.0.0 8080 . 1\n";
+                  << "    http-server-async 0.0.0.0 8080 3\n";
         return EXIT_FAILURE;
     }
     std::string const address = argv[1];

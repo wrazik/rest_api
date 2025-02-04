@@ -6,7 +6,7 @@
 #include <boost/beast.hpp>
 #include <boost/beast/http.hpp>
 
-#include "common_types.hpp"
+#include "store.hpp"
 
 namespace rest {
 

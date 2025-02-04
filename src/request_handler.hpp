@@ -7,10 +7,11 @@
 #include <boost/beast/http.hpp>
 
 #include "common_ops.hpp"
+#include "resp_factory.hpp"
 #include "save_event.hpp"
 
 namespace rest {
-enum class MessageType { SAVE_EVENT, GET_MEAN_PATH, UNKNOWN };
+enum class MessageType { SAVE_EVENT, GET_MEAN_PATH, HEALTHCHECK, UNKNOWN };
 
 template <class Body, class Allocator>
 MessageType get_message_type(
@@ -24,9 +25,10 @@ MessageType get_message_type(
                req.method() == http::verb::post &&
                std::count(path.begin(), path.end(), '/') == 2) {
         return MessageType::SAVE_EVENT;
-    } else {
-        return MessageType::UNKNOWN;
+    } else if (path == "/healthcheck" && req.method() == http::verb::get) {
+        return MessageType::HEALTHCHECK;
     }
+    return MessageType::UNKNOWN;
 }
 
 namespace beast = boost::beast;
@@ -42,59 +44,24 @@ http::message_generator handle_request(
         case MessageType::GET_MEAN_PATH:
             std::cout << "get mean\n";
             break;
+        case MessageType::HEALTHCHECK:
+            return RespFactory::ok(req, "OK");
         case MessageType::UNKNOWN:
-            std::cout << "unknown\n";
-            break;
+            return RespFactory::not_found(req, "Unknown path");
     }
-    std::cout << "This is example handle " << std::endl;
-    for (const auto& el : *store) {
-        std::cout << el.first << " " << el.second << std::endl;
-    }
-    std::cout << "End of example handle " << std::endl;
-    std::string path = std::string(req.target());
-    std::string body = std::string(req.body());
-    std::string method = std::string(req.method_string());
-
-    std::cout << "Request: \n"
-              << "path: " << path << "\n"
-              << "body: " << body << "\n"
-              << "method: " << method << "\n";
 
     auto const bad_request = [&req](beast::string_view why) {
         http::response<http::string_body> res{http::status::bad_request,
                                               req.version()};
 
         res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-        res.set(http::field::content_type, "text/html");
+        res.set(http::field::content_type, "application/json");
         res.keep_alive(req.keep_alive());
         res.body() = std::string(why);
         res.prepare_payload();
         return res;
     };
 
-    // auto const not_found = [&req](beast::string_view target) {
-    //     http::response<http::string_body> res{http::status::not_found,
-    //                                           req.version()};
-    //     res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-    //     res.set(http::field::content_type, "text/html");
-    //     res.keep_alive(req.keep_alive());
-    //     res.body() =
-    //         "The resource '" + std::string(target) + "' was not found.";
-    //     res.prepare_payload();
-    //     return res;
-    // };
-
-    // auto const server_error = [&req](beast::string_view what) {
-    //     http::response<http::string_body> res{
-    //         http::status::internal_server_error, req.version()};
-    //     res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-    //     res.set(http::field::content_type, "text/html");
-    //     res.keep_alive(req.keep_alive());
-    //     res.body() = "An error occurred: '" + std::string(what) + "'";
-    //     res.prepare_payload();
-    //     return res;
-    // };
-
-    return bad_request("Unknown HTTP-method");
+    return RespFactory::bad_request(req, "Unknown HTTP-method");
 }
 }  // namespace rest

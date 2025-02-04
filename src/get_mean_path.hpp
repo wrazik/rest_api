@@ -13,7 +13,7 @@
 namespace rest {
 
 template <class Body, class Allocator>
-http::message_generator process_save_event(
+http::message_generator get_mean_path(
     const std::shared_ptr<Store>& store,
     http::request<Body, http::basic_fields<Allocator>>&& req) {
     std::string event_name = get_event_name(req.target());
