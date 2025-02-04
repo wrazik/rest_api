@@ -5,7 +5,6 @@ http::message_generator RespFactory::create_response(
     const http::request<http::string_body> &req, const std::string &msg,
     http::status status) {
     http::response<http::string_body> res{status, req.version()};
-    res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
     res.set(http::field::content_type, "application/json");
     res.keep_alive(req.keep_alive());
     res.body() = std::string(msg);

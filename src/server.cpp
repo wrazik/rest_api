@@ -16,9 +16,10 @@ using tcp = boost::asio::ip::tcp;
 Server::Server(const std::string &address, const unsigned short port,
                const size_t threads)
     : m_address(address),
-      m_port(port),
       m_context(threads),
-      m_thread_count(threads) {
+      m_thread_count(threads),
+      m_port(port)
+      {
     m_threads.reserve(threads - 1);
     net::ip::address addr = net::ip::make_address(address);
 

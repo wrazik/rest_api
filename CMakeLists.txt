@@ -6,6 +6,21 @@ find_package(boost_beast REQUIRED CONFIG)
 find_package(boost_asio REQUIRED CONFIG)
 find_package(nlohmann_json REQUIRED CONFIG)
 
+if(MSVC)
+    set(COMPILE_OPTIONS
+            /W4
+            /WX
+            /permissive-
+    )
+else()
+    set(COMPILE_OPTIONS
+            -Wall
+            -Wextra
+            -Werror
+            -Wpedantic
+    )
+endif()
+
 set(CPP_SOURCES
         src/server.cpp
         src/server.hpp
@@ -27,10 +42,12 @@ set(CPP_SOURCES
 
 add_library(rest_api_lib ${CPP_SOURCES})
 target_link_libraries(rest_api_lib PRIVATE Boost::asio Boost::beast nlohmann_json::nlohmann_json)
+target_compile_options(rest_api_lib PRIVATE ${COMPILE_OPTIONS})
 target_include_directories(rest_api_lib PUBLIC src)
-add_executable(rest_api src/rest_api.cpp)
 
+add_executable(rest_api src/rest_api.cpp)
 target_link_libraries(rest_api PRIVATE Boost::asio Boost::beast rest_api_lib)
+target_compile_options(rest_api PRIVATE ${COMPILE_OPTIONS})
 
 enable_testing()
 set(TEST_SOURCES
@@ -42,6 +59,7 @@ add_executable(run_tests
         ${TEST_SOURCES}
 )
 target_link_libraries(run_tests PRIVATE GTest::gtest_main rest_api_lib)
+target_compile_options(run_tests PRIVATE ${COMPILE_OPTIONS})
 add_test(
         NAME run_tests
         COMMAND run_tests)
