@@ -21,7 +21,7 @@ http::message_generator process_save_event(
     try {
         const auto event = parse_event(req);
         store->save_event(event_name, event);
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         return RespFactory::bad_request(req, "Incorrect save event body");
     }
     return RespFactory::ok(req, "OK");
