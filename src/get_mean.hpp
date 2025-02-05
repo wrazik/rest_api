@@ -10,8 +10,8 @@
 
 #include "common_ops.hpp"
 #include "query.hpp"
-#include "store.hpp"
 #include "resp_factory.hpp"
+#include "store.hpp"
 
 namespace rest {
 

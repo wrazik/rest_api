@@ -14,6 +14,9 @@ def wait_for_server(url, timeout=30):
             time.sleep(1)
     return False
 
+def compare_floats(a, b, epsilon=1e-3):
+    return abs(a - b) < epsilon
+
 def test_rest_api():
     binary_path = "../builds/ninja-multi-vcpkg/Release/rest_api"
     healthcheck_url = "http://localhost:5000/healthcheck"
@@ -26,13 +29,13 @@ def test_rest_api():
         post_url = "http://localhost:5000/paths/eventname"
         payload = {
             "values": [1, 2, 3],
-            "date": 1738331323010
+            "date": 1738780865
         }
         response = requests.post(post_url, json=payload)
         assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
         payload = {
             "values": [3, 4, 5],
-            "date": 1738331323015
+            "date": 1738780860
         }
         response = requests.post(post_url, json=payload)
         assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
@@ -40,17 +43,26 @@ def test_rest_api():
         get_url = "http://localhost:5000/paths/eventname/meanLength"
         response = requests.get(get_url)
         assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
-        assert response.json().mean == 3.0, f"Unexpected response: {response.json()}"
+        assert compare_floats(response.json()["mean"],3.0), f"Unexpected response: {response.json()}"
+
+        only_second_body = {
+            "resultUnit": "seconds",
+            "startTimestamp": 1738780862,
+        }
+        response = requests.get(get_url, json=only_second_body)
+        assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+        assert compare_floats(response.json()["mean"], 2.0), f"Unexpected response: {response.json()}"
+
+        only_first_body = {
+            "resultUnit": "seconds",
+            "endTimestamp": 1738780862,
+        }
+        response = requests.get(get_url, json=only_first_body)
+        assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+        assert compare_floats(response.json()["mean"], 4.0), f"Unexpected response: {response.json()}"
 
     finally:
         process.terminate()
-        try:
-            process.wait(timeout=10)
-        except:
-            process.kill()
-        stdout, stderr = process.communicate()
-        print("stdout:", stdout)
-        print("stderr:", stderr)
 
 if __name__ == "__main__":
     pytest.main(["-v", "test_api.py"])
