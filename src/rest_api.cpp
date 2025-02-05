@@ -9,9 +9,11 @@ int main(int argc, char* argv[]) {
         std::cerr << "Usage: rest_api <address> <port> "
                      "<threads>\n"
                   << "Example:\n"
-                  << "    http-server-async 0.0.0.0 8080 . 1\n";
+                  << "    http-server-async 0.0.0.0 8080 3\n";
         return EXIT_FAILURE;
     }
+    std::cout << "Starting server on " << argv[1] << ":" << argv[2]
+              << " with " << argv[3] << " threads\n";
     std::string const address = argv[1];
     auto const port = static_cast<unsigned short>(std::atoi(argv[2]));
     auto const threads = std::max<int>(1, std::atoi(argv[3]));

@@ -88,6 +88,9 @@
     {
       "name": "test-ninja-vcpkg",
       "configurePreset": "ninja-multi-vcpkg",
+      "output": {
+        "verbosity": "verbose"
+      },
       "hidden": true
     },
     {
