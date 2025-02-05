@@ -57,13 +57,14 @@ jobs:
         run: |
           cmake --build --preset ninja-vcpkg-release
 
-      - name: Test (Release configuration)
+      - name: Unit test
+        if: runner.os == 'Linux'
         run: |
           ctest --preset test-release
 
-      - name: Prepare python environment
+      - name: Integration tests
         if: runner.os == 'Linux'
         run: |
           cd ${{ github.workspace }}/integration_tests
-          python -r requirements.txt
+          pip install -r requirements.txt
           pytest -v test_api.py
