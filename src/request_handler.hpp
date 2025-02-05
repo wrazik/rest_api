@@ -7,6 +7,7 @@
 #include <boost/beast/http.hpp>
 
 #include "common_ops.hpp"
+#include "get_mean.hpp"
 #include "resp_factory.hpp"
 #include "save_event.hpp"
 
@@ -42,8 +43,7 @@ http::message_generator handle_request(
         case MessageType::SAVE_EVENT:
             return process_save_event(store, std::move(req));
         case MessageType::GET_MEAN_PATH:
-            std::cout << "get mean\n";
-            break;
+            return get_mean(store, std::move(req));
         case MessageType::HEALTHCHECK:
             return RespFactory::ok(req, "OK");
         case MessageType::UNKNOWN:

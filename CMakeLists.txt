@@ -34,9 +34,11 @@ set(CPP_SOURCES
         src/save_event.hpp
         src/store.cpp
         src/store.hpp
-        src/get_mean_path.hpp
+        src/get_mean.hpp
         src/resp_factory.cpp
         src/resp_factory.hpp
+        src/query.hpp
+        src/query.cpp
 )
 
 

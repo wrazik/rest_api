@@ -31,6 +31,7 @@ struct adl_serializer<std::chrono::system_clock::time_point> {
 namespace rest {
 namespace beast = boost::beast;
 namespace http = beast::http;
+struct Query;
 struct Event {
     std::chrono::system_clock::time_point date;
     std::vector<size_t> values;
@@ -54,8 +55,6 @@ class Store {
 
     void save_event(const std::string& name, const Event& event);
     double get_mean(const std::string& name);
-    double get_mean(const std::string& name,
-                    const std::chrono::system_clock::time_point& from,
-                    const std::chrono::system_clock::time_point& to);
+    double get_mean(const std::string& name, const Query& query);
 };
 }  // namespace rest

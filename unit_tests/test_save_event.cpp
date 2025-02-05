@@ -9,7 +9,7 @@
 #include <store.hpp>
 
 namespace rest {
-    namespace http = boost::beast::http;
+namespace http = boost::beast::http;
 
 TEST(StoreTest, ParseCorrectEvent) {
     http::request<http::string_body> req;
@@ -17,7 +17,8 @@ TEST(StoreTest, ParseCorrectEvent) {
     req.body() = std::move(event);
     const auto parsed_event = rest::parse_event(req);
 
-    ASSERT_EQ(parsed_event.date, std::chrono::system_clock::time_point(std::chrono::seconds(1738696320)));
+    ASSERT_EQ(parsed_event.date, std::chrono::system_clock::time_point(
+                                     std::chrono::seconds(1738696320)));
     ASSERT_EQ(parsed_event.values, std::vector<size_t>({1, 2, 3, 4, 5}));
 }
 

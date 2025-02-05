@@ -17,17 +17,31 @@ def wait_for_server(url, timeout=30):
 def test_rest_api():
     binary_path = "../builds/ninja-multi-vcpkg/Release/rest_api"
     healthcheck_url = "http://localhost:5000/healthcheck"
-    post_url = "http://localhost:5000/your_endpoint"
-    payload = {"key": "value"}
     command_args = ["0.0.0.0", "5000", "3"]
 
     process = subprocess.Popen([binary_path] + command_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     try:
         assert wait_for_server(healthcheck_url), "Server failed to start"
 
+        post_url = "http://localhost:5000/paths/eventname"
+        payload = {
+            "values": [1, 2, 3],
+            "date": 1738331323010
+        }
         response = requests.post(post_url, json=payload)
         assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
-        assert "expected_key" in response.json(), "Response does not contain expected data"
+        payload = {
+            "values": [3, 4, 5],
+            "date": 1738331323015
+        }
+        response = requests.post(post_url, json=payload)
+        assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+
+        get_url = "http://localhost:5000/paths/eventname/meanLength"
+        response = requests.get(post_url)
+        assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+        assert response.json().mean == 3.0, f"Unexpected response: {response.json()}"
+
 
     finally:
         process.terminate()

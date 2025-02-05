@@ -18,8 +18,7 @@ Server::Server(const std::string &address, const unsigned short port,
     : m_address(address),
       m_context(threads),
       m_thread_count(threads),
-      m_port(port)
-      {
+      m_port(port) {
     m_threads.reserve(threads - 1);
     net::ip::address addr = net::ip::make_address(address);
 
