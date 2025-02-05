@@ -38,15 +38,19 @@ def test_rest_api():
         assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
 
         get_url = "http://localhost:5000/paths/eventname/meanLength"
-        response = requests.get(post_url)
+        response = requests.get(get_url)
         assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
         assert response.json().mean == 3.0, f"Unexpected response: {response.json()}"
 
-
     finally:
         process.terminate()
-        process.wait()
-        assert process.returncode is not None, "Process did not terminate properly"
+        try:
+            process.wait(timeout=10)
+        except:
+            process.kill()
+        stdout, stderr = process.communicate()
+        print("stdout:", stdout)
+        print("stderr:", stderr)
 
 if __name__ == "__main__":
     pytest.main(["-v", "test_api.py"])
