@@ -60,7 +60,7 @@ include(GoogleTest)
 add_executable(run_tests
         ${TEST_SOURCES}
 )
-target_link_libraries(run_tests PRIVATE GTest::gtest_main rest_api_lib)
+target_link_libraries(run_tests PRIVATE GTest::gtest_main GTest::gmock rest_api_lib)
 target_compile_options(run_tests PRIVATE ${COMPILE_OPTIONS})
 add_test(
         NAME run_tests

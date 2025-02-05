@@ -34,7 +34,7 @@ namespace http = beast::http;
 struct Query;
 struct Event {
     std::chrono::system_clock::time_point date;
-    std::vector<size_t> values;
+    std::vector<double> values;
 };
 
 Event parse_event(const http::request<http::string_body>& req);
@@ -54,7 +54,6 @@ class Store {
     const std::map<std::string, std::vector<Event>>& get_store() const;
 
     void save_event(const std::string& name, const Event& event);
-    double get_mean(const std::string& name);
     double get_mean(const std::string& name, const Query& query);
 };
 }  // namespace rest

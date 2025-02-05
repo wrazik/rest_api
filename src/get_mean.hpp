@@ -33,7 +33,7 @@ http::message_generator get_mean(
         }();
         const double mean = store->get_mean(event_name, query);
         return RespFactory::ok(req, "{\"mean\": " + std::to_string(mean) + "}");
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         return RespFactory::bad_request(req, "Incorrect get mean body");
     }
 }

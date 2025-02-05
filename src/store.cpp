@@ -13,7 +13,7 @@ Event parse_event(const http::request<http::string_body>& req) {
     const auto body = nlohmann::json::parse(req.body());
     return Event{
         .date = body["date"].get<std::chrono::system_clock::time_point>(),
-        .values = body["values"].get<std::vector<size_t>>()};
+        .values = body["values"].get<std::vector<double>>()};
 }
 
 void Store::save_event(const std::string& name, const Event& event) {
