@@ -22,6 +22,5 @@ class Server {
     boost::asio::io_context m_context;
     std::vector<std::thread> m_threads;
     size_t m_thread_count;
-    size_t m_port;
 };
 }  // namespace rest

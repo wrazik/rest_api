@@ -58,7 +58,6 @@ jobs:
           cmake --build --preset ninja-vcpkg-release
 
       - name: Unit test
-        if: runner.os == 'Linux'
         run: |
           ctest --preset test-release
 
