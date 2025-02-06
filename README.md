@@ -32,7 +32,7 @@ Example:
  ./builds/ninja-multi-vcpkg/Release/rest_api 0.0.0.0 5000 3
  ```
 
-Code is compiled on CI, take a look at [Workflow][./.github/workflows/build.yml] file.
+Code is compiled on CI, take a look at [Workflow](./.github/workflows/build.yml) file.
   
 ## Unit tests
 To run unit tests, run the following commands:
